@@ -19,6 +19,10 @@ public class CurrencyExchangeCalculatorPage extends PageObject {
     protected WebElement countrySelector;
     @FindBy(xpath = "//ul[@class='dropdown-menu']//li//a//span")
     protected WebElement popupSelector;
+    @FindBy(xpath = "//span[contains(@class, 'flag-icon-pl')]")
+    protected WebElement flagIcon;
+    @FindBy(xpath = "//button[@id='countries-dropdown']")
+    protected WebElement countryButton;
 
     String xpathAllRows = "//table//tr[@class='ng-scope']";
     String dropdownElement = "//ul[@class='dropdown-menu']//li//a";
@@ -45,16 +49,25 @@ public class CurrencyExchangeCalculatorPage extends PageObject {
         List<WebElement> allElements = driver.findElements(By.xpath(dropdownElement));
 
         for (WebElement li : allElements) {
-            String t = li.getText();
-            if (li.getText().contains(name)) {
-                System.out.println(t);
-                li.click();
-                break;
-            } else {
-                System.out.println("Not found such name");
+            try {
+                if (li.getText().contains(name)) {
+                    li.click();
+                    break;
+                }
+            } catch (Exception e) {
             }
         }
     }
+    public void clickFlagIcon() {
+        wait.until(ExpectedConditions.visibilityOf(flagIcon));
+        flagIcon.click();
+    }
+    public String checkChosenCountry() {
+        wait.until(ExpectedConditions.visibilityOf(countryButton));
+        String visibleCountry = countryButton.getText().replaceAll("\\s", "");
+        return visibleCountry;
+    }
+
 
     public List<String> checkingAllDifferences() {
         List<String> issues = new ArrayList<>();
@@ -86,7 +99,7 @@ public class CurrencyExchangeCalculatorPage extends PageObject {
                             issues.add("Invalid Bank Loss for row: " + row);
                         }
                     } else {
-                        issues.add("Bank Loss is not presented for row: " + row);
+                        issues.add("Bank Amount is not presented for row: " + row);
                     }
                 }
             }

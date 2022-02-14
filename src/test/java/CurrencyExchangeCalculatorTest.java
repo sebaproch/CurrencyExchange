@@ -33,6 +33,8 @@ public class CurrencyExchangeCalculatorTest {
         Thread.sleep(4000);
         page.clickCountrySelector("Poland");
         Thread.sleep(2000);
+        page.clickFlagIcon();
+        Assert.assertEquals(page.checkChosenCountry(),"Poland");
     }
 
     @Test(priority = 2)
