@@ -2,6 +2,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
 import org.testng.annotations.*;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -17,7 +18,7 @@ public class CurrencyExchangeCalculatorTest {
         driver = new ChromeDriver();
         page = new CurrencyExchangeCalculatorPage(driver);
         driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(10,TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver.get(Utils.BASE_URL);
     }
 
@@ -28,13 +29,13 @@ public class CurrencyExchangeCalculatorTest {
     }
 
     @Test(priority = 1)
-    public void changeLocalizationTest2 () throws Exception {
+    public void changeLocalizationTest2() throws Exception {
         page.clickDropup();
         Thread.sleep(4000);
-        page.clickCountrySelector("Poland");
+        page.clickCountrySelector(page.COUNTRY);
         Thread.sleep(2000);
         page.clickFlagIcon();
-        Assert.assertEquals(page.checkChosenCountry(),"Poland");
+        Assert.assertEquals(page.checkChosenCountry(), page.COUNTRY);
     }
 
     @Test(priority = 2)
