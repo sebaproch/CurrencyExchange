@@ -11,6 +11,7 @@ import java.util.List;
 public class CurrencyExchangeCalculatorPage extends PageObject {
     private WebDriverWait wait;
     protected final String COUNTRY = "Poland";
+    protected final Double AMOUNT = 255.0;
     @FindBy(xpath = "//input[contains(@class, 'ng-not-empty')][@type='text']")
     protected WebElement notEmptyInputBox;
     @FindBy(xpath = "//input[contains(@class, 'ng-empty')][@type='text']")
@@ -37,6 +38,13 @@ public class CurrencyExchangeCalculatorPage extends PageObject {
     public void fillAmountBox(double quantity) {
         wait.until(ExpectedConditions.visibilityOf(notEmptyInputBox));
         emptyInputBox.sendKeys(String.valueOf(quantity));
+    }
+
+    public Double checkIfNotEmptyInputBox() {
+        wait.until(ExpectedConditions.visibilityOf(notEmptyInputBox));
+        WebElement visibleValue = notEmptyInputBox;
+        Double quantityValue = Double.parseDouble(visibleValue.getAttribute("value"));
+        return quantityValue;
     }
 
     public void clickDropup() {
@@ -72,7 +80,7 @@ public class CurrencyExchangeCalculatorPage extends PageObject {
         return visibleCountry;
     }
 
-    public List<String> checkingAllDifferences() throws Exception{
+    public List<String> checkingAllDifferences() throws Exception {
         List<String> issues = new ArrayList<>();
         Integer row = 1;
         List<WebElement> allRows = driver.findElements(By.xpath(xpathAllRows));
@@ -111,7 +119,6 @@ public class CurrencyExchangeCalculatorPage extends PageObject {
         return issues;
     }
 }
-
 
 
 

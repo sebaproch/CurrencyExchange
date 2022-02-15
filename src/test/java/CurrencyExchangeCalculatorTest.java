@@ -24,16 +24,14 @@ public class CurrencyExchangeCalculatorTest {
 
     @Test(priority = 0)
     public void fillAmountBoxTest1() throws Exception {
-        page.fillAmountBox(255);
-        Thread.sleep(3000);
+        page.fillAmountBox(page.AMOUNT);
+        Assert.assertEquals(page.checkIfNotEmptyInputBox(), page.AMOUNT);
     }
 
     @Test(priority = 1)
     public void changeLocalizationTest2() throws Exception {
         page.clickDropup();
-        Thread.sleep(4000);
         page.clickCountrySelector(page.COUNTRY);
-        Thread.sleep(2000);
         page.clickFlagIcon();
         Assert.assertEquals(page.checkChosenCountry(), page.COUNTRY);
     }
@@ -46,7 +44,6 @@ public class CurrencyExchangeCalculatorTest {
 
     @AfterClass
     public void afterClass() throws Exception {
-        Thread.sleep(2000);
         driver.quit();
     }
 }
