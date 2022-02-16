@@ -5,6 +5,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class CurrencyExchangeCalculatorPage extends PageObject {
     @FindBy(xpath = "//input[contains(@class, 'ng-empty')][@type='text']")
     protected WebElement emptyInputBox;
     @FindBy(xpath = "//span[@class='dropup']")
-    protected WebElement dropup;
+    protected WebElement dropUp;
     @FindBy(xpath = "//div[@class='dropup']//button[@id='countries-dropdown']//span[@class='caret']")
     protected WebElement countrySelector;
     @FindBy(xpath = "//ul[@class='dropdown-menu']//li//a//span")
@@ -26,16 +27,25 @@ public class CurrencyExchangeCalculatorPage extends PageObject {
     protected WebElement flagIcon;
     @FindBy(xpath = "//button[@id='countries-dropdown']")
     protected WebElement countryButton;
+    @FindBy(xpath = "//ul[@class='dropdown-menu']//li//a")
+    protected List<WebElement> dropdownElement;
+    @FindBy(xpath = "//td[@data-title='Paysera rate'][1]")
+    protected WebElement paysValueElement;
+    @FindBy(xpath = "//td[@data-title='mBank amount'][1]")
+    protected WebElement firstBankValueElement;
 
     String xpathAllRows = "//table//tr[@class='ng-scope']";
-    String dropdownElement = "//ul[@class='dropdown-menu']//li//a";
+    String differenceElementValue = "./td[@data-title='mBank amount']//span[contains(@class, 'other-bank-loss')]";
+    String paysValue = "./td[@data-title='Paysera rate']//span[@class='ng-binding']";
+    String firstBankView = "./td[@data-title='mBank amount']//span[@class='ng-binding']";
 
     public CurrencyExchangeCalculatorPage(WebDriver driver) {
         super(driver);
-        wait = new WebDriverWait(driver, 7);
+        wait = new WebDriverWait(driver, Duration.ofSeconds(5000));
     }
 
     public void fillAmountBox(double quantity) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(7000));
         wait.until(ExpectedConditions.visibilityOf(notEmptyInputBox));
         emptyInputBox.sendKeys(String.valueOf(quantity));
     }
@@ -43,20 +53,19 @@ public class CurrencyExchangeCalculatorPage extends PageObject {
     public Double checkIfNotEmptyInputBox() {
         wait.until(ExpectedConditions.visibilityOf(notEmptyInputBox));
         WebElement visibleValue = notEmptyInputBox;
-        Double quantityValue = Double.parseDouble(visibleValue.getAttribute("value"));
-        return quantityValue;
+        return Double.parseDouble(visibleValue.getAttribute("value"));
     }
 
-    public void clickDropup() {
-        wait.until(ExpectedConditions.visibilityOf(dropup));
-        dropup.click();
+    public void clickDropUp() {
+        wait.until(ExpectedConditions.visibilityOf(dropUp));
+        dropUp.click();
     }
 
-    public void clickCountrySelector(String name) throws Exception {
+    public void clickCountrySelector(String name) {
         wait.until(ExpectedConditions.visibilityOf(countrySelector));
         countrySelector.click();
         wait.until(ExpectedConditions.visibilityOf(popupSelector));
-        List<WebElement> allElements = driver.findElements(By.xpath(dropdownElement));
+        List<WebElement> allElements = dropdownElement;
 
         for (WebElement li : allElements) {
             try {
@@ -76,43 +85,45 @@ public class CurrencyExchangeCalculatorPage extends PageObject {
 
     public String checkChosenCountry() {
         wait.until(ExpectedConditions.visibilityOf(countryButton));
-        String visibleCountry = countryButton.getText().replaceAll("\\s", "");
-        return visibleCountry;
+        return countryButton.getText().replaceAll("\\s", "");
     }
 
     public List<String> checkingAllDifferences() throws Exception {
         List<String> issues = new ArrayList<>();
-        Integer row = 1;
+        int row = 1;
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10000));
+        wait.until(ExpectedConditions.visibilityOf(paysValueElement));
         List<WebElement> allRows = driver.findElements(By.xpath(xpathAllRows));
         for (WebElement tr : allRows) {
-            WebElement paysera = tr.findElement(By.xpath("./td[@data-title='Paysera rate']//span[@class='ng-binding']"));
-            double payseraAmount = 0;
-            if (paysera.isDisplayed()) {
-                payseraAmount = Double.parseDouble(paysera.getText().replaceAll(",", ""));
-            }
-            try {
-                WebElement firstBank = tr.findElement(By.xpath("./td[@data-title='mBank amount']//span[@class='ng-binding']"));
-                double firstBankAmount = 0;
-                if (firstBank.isDisplayed()) {
-                    firstBankAmount = Double.parseDouble(firstBank.getText().replaceAll(",", ""));
-                    if (firstBankAmount < payseraAmount) {
-                        WebElement differenceElement = tr.findElement(By.xpath("./td[@data-title='mBank amount']//span[contains(@class, 'other-bank-loss')]"));
-                        double differenceAmount = 0;
-                        if (firstBank.isDisplayed()) {
-                            String text = differenceElement.getText().replaceAll("\\s", "").replaceAll(",", "").replaceAll("[\\[\\](){}]", "");
-                            differenceAmount = Double.parseDouble(text);
-                            double differenceAmountRound = Math.round(differenceAmount * 100) / 100;
-                            double expected = firstBankAmount - payseraAmount;
-                            double expectedRound = Math.round(expected * 100) / 100;
-                            if (expectedRound != differenceAmountRound) {
-                                issues.add("Invalid Bank Loss for row: " + row);
+            WebElement pays = tr.findElement(By.xpath(paysValue));
+            double paysAmount;
+            if (pays.isDisplayed()) {
+                paysAmount = Double.parseDouble(pays.getText().replaceAll(",", ""));
+                try {
+                    wait.until(ExpectedConditions.visibilityOf(firstBankValueElement));
+                    WebElement firstBank = tr.findElement(By.xpath(firstBankView));
+                    double firstBankAmount;
+                    if (firstBank.isDisplayed()) {
+                        firstBankAmount = Double.parseDouble(firstBank.getText().replaceAll(",", ""));
+                        if (firstBankAmount < paysAmount) {
+                            WebElement differenceElement = tr.findElement(By.xpath(differenceElementValue));
+                            double differenceAmount;
+                            if (firstBank.isDisplayed()) {
+                                String text = differenceElement.getText().replaceAll("\\s", "").replaceAll(",", "").replaceAll("[\\[\\](){}]", "");
+                                differenceAmount = Double.parseDouble(text);
+                                double differenceAmountRound = Math.round(differenceAmount);
+                                double expected = firstBankAmount - paysAmount;
+                                double expectedRound = Math.round(expected);
+                                if (expectedRound != differenceAmountRound) {
+                                    issues.add("Invalid Bank Loss for row: " + row);
+                                }
+                            } else {
+                                issues.add("Bank Amount is not presented for row: " + row);
                             }
-                        } else {
-                            issues.add("Bank Amount is not presented for row: " + row);
                         }
                     }
+                } catch (Exception e) {
                 }
-            } catch (Exception e) {
             }
             row++;
         }

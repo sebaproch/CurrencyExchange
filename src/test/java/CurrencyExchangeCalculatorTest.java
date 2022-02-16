@@ -3,34 +3,34 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
 import org.testng.annotations.*;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class CurrencyExchangeCalculatorTest {
     private WebDriver driver;
     CurrencyExchangeCalculatorPage page;
 
     @BeforeClass
-    public void beforeClass() throws Exception {
+    public void beforeClass() {
         System.setProperty("webdriver.chrome.driver",
                 Utils.CHROME_DRIVER_LOCATION);
         driver = new ChromeDriver();
         page = new CurrencyExchangeCalculatorPage(driver);
         driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10000));
         driver.get(Utils.BASE_URL);
     }
 
-    @Test(priority = 0)
-    public void fillAmountBoxTest1() throws Exception {
+    @Test
+    public void fillAmountBoxTest1() {
         page.fillAmountBox(page.AMOUNT);
         Assert.assertEquals(page.checkIfNotEmptyInputBox(), page.AMOUNT);
     }
 
     @Test(priority = 1)
-    public void changeLocalizationTest2() throws Exception {
-        page.clickDropup();
+    public void changeLocalizationTest2() throws Exception{
+        page.clickDropUp();
         page.clickCountrySelector(page.COUNTRY);
         page.clickFlagIcon();
         Assert.assertEquals(page.checkChosenCountry(), page.COUNTRY);
@@ -43,7 +43,7 @@ public class CurrencyExchangeCalculatorTest {
     }
 
     @AfterClass
-    public void afterClass() throws Exception {
+    public void afterClass() {
         driver.quit();
     }
 }
