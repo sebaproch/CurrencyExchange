@@ -34,6 +34,7 @@ public class CurrencyExchangeCalculatorPage extends PageObject {
     @FindBy(xpath = "//td[@data-title='mBank amount'][1]")
     protected WebElement firstBankValueElement;
 
+    String allE = "./td[@data-title='mBank amount']";
     String xpathAllRows = "//table//tr[@class='ng-scope']";
     String differenceElementValue = "./td[@data-title='mBank amount']//span[contains(@class, 'other-bank-loss')]";
     String paysValue = "./td[@data-title='Paysera rate']//span[@class='ng-binding']";
@@ -88,41 +89,38 @@ public class CurrencyExchangeCalculatorPage extends PageObject {
         return countryButton.getText().replaceAll("\\s", "");
     }
 
-    public List<String> checkingAllDifferences() throws Exception {
+    public List<String> checkingAllDifferences() {
         List<String> issues = new ArrayList<>();
         int row = 1;
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10000));
         wait.until(ExpectedConditions.visibilityOf(paysValueElement));
         List<WebElement> allRows = driver.findElements(By.xpath(xpathAllRows));
         for (WebElement tr : allRows) {
+            String t = tr.findElement(By.xpath(allE)).getText();
+            if (!t.contains(".")) {
+                continue;
+            }
             WebElement pays = tr.findElement(By.xpath(paysValue));
             double paysAmount;
             if (pays.isDisplayed()) {
                 paysAmount = Double.parseDouble(pays.getText().replaceAll(",", ""));
-                try {
-                    wait.until(ExpectedConditions.visibilityOf(firstBankValueElement));
-                    WebElement firstBank = tr.findElement(By.xpath(firstBankView));
-                    double firstBankAmount;
-                    if (firstBank.isDisplayed()) {
-                        firstBankAmount = Double.parseDouble(firstBank.getText().replaceAll(",", ""));
-                        if (firstBankAmount < paysAmount) {
-                            WebElement differenceElement = tr.findElement(By.xpath(differenceElementValue));
-                            double differenceAmount;
-                            if (firstBank.isDisplayed()) {
-                                String text = differenceElement.getText().replaceAll("\\s", "").replaceAll(",", "").replaceAll("[\\[\\](){}]", "");
-                                differenceAmount = Double.parseDouble(text);
-                                double differenceAmountRound = Math.round(differenceAmount);
-                                double expected = firstBankAmount - paysAmount;
-                                double expectedRound = Math.round(expected);
-                                if (expectedRound != differenceAmountRound) {
-                                    issues.add("Invalid Bank Loss for row: " + row);
-                                }
-                            } else {
-                                issues.add("Bank Amount is not presented for row: " + row);
-                            }
+                wait.until(ExpectedConditions.visibilityOf(firstBankValueElement));
+                WebElement firstBank = tr.findElement(By.xpath(firstBankView));
+                double firstBankAmount;
+                if (firstBank.isDisplayed()) {
+                    firstBankAmount = Double.parseDouble(firstBank.getText().replaceAll(",", ""));
+                    if (firstBankAmount < paysAmount) {
+                        WebElement differenceElement = tr.findElement(By.xpath(differenceElementValue));
+                        double differenceAmount;
+                        String text = differenceElement.getText().replaceAll("\\s", "").replaceAll(",", "").replaceAll("[\\[\\](){}]", "");
+                        differenceAmount = Double.parseDouble(text);
+                        double differenceAmountRound = Math.round(differenceAmount);
+                        double expected = firstBankAmount - paysAmount;
+                        double expectedRound = Math.round(expected);
+                        if (expectedRound != differenceAmountRound) {
+                            issues.add("Invalid Bank Loss for row: " + row);
                         }
                     }
-                } catch (Exception e) {
                 }
             }
             row++;
