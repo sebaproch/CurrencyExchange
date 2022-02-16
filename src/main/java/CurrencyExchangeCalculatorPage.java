@@ -102,28 +102,32 @@ public class CurrencyExchangeCalculatorPage extends PageObject {
             }
             WebElement pays = tr.findElement(By.xpath(paysValue));
             double paysAmount;
-            if (pays.isDisplayed()) {
-                paysAmount = Double.parseDouble(pays.getText().replaceAll(",", ""));
-                wait.until(ExpectedConditions.visibilityOf(firstBankValueElement));
-                WebElement firstBank = tr.findElement(By.xpath(firstBankView));
-                double firstBankAmount;
-                if (firstBank.isDisplayed()) {
-                    firstBankAmount = Double.parseDouble(firstBank.getText().replaceAll(",", ""));
-                    if (firstBankAmount < paysAmount) {
-                        WebElement differenceElement = tr.findElement(By.xpath(differenceElementValue));
-                        double differenceAmount;
-                        String text = differenceElement.getText().replaceAll("\\s", "").replaceAll(",", "").replaceAll("[\\[\\](){}]", "");
-                        differenceAmount = Double.parseDouble(text);
-                        double differenceAmountRound = Math.round(differenceAmount);
-                        double expected = firstBankAmount - paysAmount;
-                        double expectedRound = Math.round(expected);
-                        if (expectedRound != differenceAmountRound) {
-                            issues.add("Invalid Bank Loss for row: " + row);
+            try {
+                if (pays.isDisplayed()) {
+                    paysAmount = Double.parseDouble(pays.getText().replaceAll(",", ""));
+                    wait.until(ExpectedConditions.visibilityOf(firstBankValueElement));
+                    WebElement firstBank = tr.findElement(By.xpath(firstBankView));
+                    double firstBankAmount;
+                    if (firstBank.isDisplayed()) {
+                        firstBankAmount = Double.parseDouble(firstBank.getText().replaceAll(",", ""));
+                        if (firstBankAmount < paysAmount) {
+                            WebElement differenceElement = tr.findElement(By.xpath(differenceElementValue));
+                            double differenceAmount;
+                            String text = differenceElement.getText().replaceAll("\\s", "").replaceAll(",", "").replaceAll("[\\[\\](){}]", "");
+                            differenceAmount = Double.parseDouble(text);
+                            double differenceAmountRound = Math.round(differenceAmount);
+                            double expected = firstBankAmount - paysAmount;
+                            double expectedRound = Math.round(expected);
+                            if (expectedRound != differenceAmountRound) {
+                                issues.add("Invalid Bank Loss for row: " + row);
+                            }
                         }
                     }
                 }
+                row++;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            row++;
         }
         return issues;
     }
