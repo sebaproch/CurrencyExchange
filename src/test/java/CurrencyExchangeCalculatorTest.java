@@ -18,26 +18,26 @@ public class CurrencyExchangeCalculatorTest {
         driver = new ChromeDriver();
         page = new CurrencyExchangeCalculatorPage(driver);
         driver.manage().window().maximize();
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10000));
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
         driver.get(Utils.BASE_URL);
     }
 
-    @Test
+    @Test(priority = 1)
     public void fillAmountBoxTest1() {
         page.fillAmountBox(page.AMOUNT);
         Assert.assertEquals(page.checkIfNotEmptyInputBox(), page.AMOUNT);
     }
 
-    @Test(priority = 1)
-    public void changeLocalizationTest2() throws Exception{
+    @Test(priority = 2)
+    public void changeLocalizationTest2() {
         page.clickDropUp();
         page.clickCountrySelector(page.COUNTRY);
         page.clickFlagIcon();
         Assert.assertEquals(page.checkChosenCountry(), page.COUNTRY);
     }
 
-    @Test(priority = 2)
-    public void representDifferenceInTextBoxTest3() throws Exception {
+    @Test(priority = 3)
+    public void representDifferenceInTextBoxTest3() {
         List<String> issues = page.checkingAllDifferences();
         Assert.assertTrue(issues.isEmpty(), "Issues: " + Arrays.toString(issues.toArray()));
     }

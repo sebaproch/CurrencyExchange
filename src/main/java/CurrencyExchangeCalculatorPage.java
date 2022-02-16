@@ -42,11 +42,11 @@ public class CurrencyExchangeCalculatorPage extends PageObject {
 
     public CurrencyExchangeCalculatorPage(WebDriver driver) {
         super(driver);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(5000));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(8));
     }
 
     public void fillAmountBox(double quantity) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(7000));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(9));
         wait.until(ExpectedConditions.visibilityOf(notEmptyInputBox));
         emptyInputBox.sendKeys(String.valueOf(quantity));
     }
@@ -75,6 +75,7 @@ public class CurrencyExchangeCalculatorPage extends PageObject {
                     break;
                 }
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -92,7 +93,7 @@ public class CurrencyExchangeCalculatorPage extends PageObject {
     public List<String> checkingAllDifferences() {
         List<String> issues = new ArrayList<>();
         int row = 1;
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10000));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(11));
         wait.until(ExpectedConditions.visibilityOf(paysValueElement));
         List<WebElement> allRows = driver.findElements(By.xpath(xpathAllRows));
         for (WebElement tr : allRows) {
