@@ -29,7 +29,7 @@ public class CurrencyExchangeCalculatorPage extends PageObject {
     protected WebElement countryButton;
     @FindBy(xpath = "//ul[@class='dropdown-menu']//li//a")
     protected List<WebElement> dropdownElement;
-    @FindBy(xpath = "//td[@data-title='Paysera rate'][1]")
+    @FindBy(xpath = "//td[contains(@data-title, 'sera')][1]")
     protected WebElement paysValueElement;
     @FindBy(xpath = "//td[@data-title='mBank amount'][1]")
     protected WebElement firstBankValueElement;
@@ -37,7 +37,7 @@ public class CurrencyExchangeCalculatorPage extends PageObject {
     String allE = "./td[@data-title='mBank amount']";
     String xpathAllRows = "//table//tr[@class='ng-scope']";
     String differenceElementValue = "./td[@data-title='mBank amount']//span[contains(@class, 'other-bank-loss')]";
-    String paysValue = "./td[@data-title='Paysera rate']//span[@class='ng-binding']";
+    String paysValue = "./td[contains(@data-title, 'sera')]//span[@class='ng-binding']";
     String firstBankView = "./td[@data-title='mBank amount']//span[@class='ng-binding']";
 
     public CurrencyExchangeCalculatorPage(WebDriver driver) {

@@ -13,9 +13,7 @@ public class CurrencyExchangeCalculatorTest {
 
     @BeforeClass
     public void beforeClass() {
-        System.setProperty("webdriver.chrome.driver",
-                Utils.CHROME_DRIVER_LOCATION);
-        driver = new ChromeDriver();
+        driver = DriverFactory.getDriver();
         page = new CurrencyExchangeCalculatorPage(driver);
         driver.manage().window().maximize();
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
