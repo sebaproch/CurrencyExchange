@@ -6,11 +6,12 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 public class DriverFactory {
     private static WebDriver webDriver;
-    private  static WebDriver createDriver() {
-            WebDriverManager.chromedriver().setup();
-            WebDriver driver = new ChromeDriver(getChromeCapabilities());
-            driver.manage().window().maximize();
-            return driver;
+
+    private static WebDriver createDriver() {
+        WebDriverManager.chromedriver().setup();
+        WebDriver driver = new ChromeDriver(getChromeCapabilities());
+        driver.manage().window().maximize();
+        return driver;
     }
 
     private static ChromeOptions getChromeCapabilities() {
@@ -23,8 +24,8 @@ public class DriverFactory {
         return options;
     }
 
-    public static WebDriver getDriver(){
-        if (webDriver == null){
+    public static WebDriver getDriver() {
+        if (webDriver == null) {
             webDriver = createDriver();
         }
         return webDriver;
